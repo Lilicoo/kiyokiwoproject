@@ -1,0 +1,900 @@
+<html><head><title>Callisto</title>
+
+
+
+
+    <meta name="shimejiBrowserExtensionId" content="gohjpllcolmccldfdggmamodembldgpc" data-version="1.6.5"><style type="text/css">
+    @charset "UTF-8";
+    /*!
+     * jQuery contextMenu - Plugin for simple contextMenu handling
+     *
+     * Version: v2.5.0
+     *
+     * Authors: Björn Brala (SWIS.nl), Rodney Rehm, Addy Osmani (patches for FF)
+     * Web: http://swisnl.github.io/jQuery-contextMenu/
+     *
+     * Copyright (c) 2011-2017 SWIS BV and contributors
+     *
+     * Licensed under
+     *   MIT License http://www.opensource.org/licenses/mit-license
+     *
+     * Date: 2017-05-25T11:30:28.663Z
+     */
+    @-webkit-keyframes cm-spin {
+      0% {
+        -webkit-transform: translateY(-50%) rotate(0deg);
+                transform: translateY(-50%) rotate(0deg);
+      }
+      100% {
+        -webkit-transform: translateY(-50%) rotate(359deg);
+                transform: translateY(-50%) rotate(359deg);
+      }
+    }
+    @-o-keyframes cm-spin {
+      0% {
+        -webkit-transform: translateY(-50%) rotate(0deg);
+             -o-transform: translateY(-50%) rotate(0deg);
+                transform: translateY(-50%) rotate(0deg);
+      }
+      100% {
+        -webkit-transform: translateY(-50%) rotate(359deg);
+             -o-transform: translateY(-50%) rotate(359deg);
+                transform: translateY(-50%) rotate(359deg);
+      }
+    }
+    @keyframes cm-spin {
+      0% {
+        -webkit-transform: translateY(-50%) rotate(0deg);
+             -o-transform: translateY(-50%) rotate(0deg);
+                transform: translateY(-50%) rotate(0deg);
+      }
+      100% {
+        -webkit-transform: translateY(-50%) rotate(359deg);
+             -o-transform: translateY(-50%) rotate(359deg);
+                transform: translateY(-50%) rotate(359deg);
+      }
+    }
+    
+    @font-face {
+      font-family: "context-menu-icons";
+      font-style: normal;
+      font-weight: normal;
+    
+      src: url("font/context-menu-icons.eot?4yg1f");
+      src: url("font/context-menu-icons.eot?4yg1f#iefix") format("embedded-opentype"), url("font/context-menu-icons.woff2?4yg1f") format("woff2"), url("font/context-menu-icons.woff?4yg1f") format("woff"), url("font/context-menu-icons.ttf?4yg1f") format("truetype");
+    }
+    
+    .context-menu-icon-add:before {
+      content: "EA01";
+    }
+    
+    .context-menu-icon-copy:before {
+      content: "EA02";
+    }
+    
+    .context-menu-icon-cut:before {
+      content: "EA03";
+    }
+    
+    .context-menu-icon-delete:before {
+      content: "EA04";
+    }
+    
+    .context-menu-icon-edit:before {
+      content: "EA05";
+    }
+    
+    .context-menu-icon-loading:before {
+      content: "EA06";
+    }
+    
+    .context-menu-icon-paste:before {
+      content: "EA07";
+    }
+    
+    .context-menu-icon-quit:before {
+      content: "EA08";
+    }
+    
+    .context-menu-icon::before {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 2em;
+      font-family: "context-menu-icons";
+      font-size: 1em;
+      font-style: normal;
+      font-weight: normal;
+      line-height: 1;
+      color: #2980b9;
+      text-align: center;
+      -webkit-transform: translateY(-50%);
+          -ms-transform: translateY(-50%);
+           -o-transform: translateY(-50%);
+              transform: translateY(-50%);
+    
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .context-menu-icon.context-menu-hover:before {
+      color: #fff;
+    }
+    
+    .context-menu-icon.context-menu-disabled::before {
+      color: #bbb;
+    }
+    
+    .context-menu-icon.context-menu-icon-loading:before {
+      -webkit-animation: cm-spin 2s infinite;
+           -o-animation: cm-spin 2s infinite;
+              animation: cm-spin 2s infinite;
+    }
+    
+    .context-menu-icon.context-menu-icon--fa {
+      display: list-item;
+      font-family: inherit;
+    }
+    .context-menu-icon.context-menu-icon--fa::before {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 2em;
+      font-family: FontAwesome;
+      font-size: 1em;
+      font-style: normal;
+      font-weight: normal;
+      line-height: 1;
+      color: #2980b9;
+      text-align: center;
+      -webkit-transform: translateY(-50%);
+          -ms-transform: translateY(-50%);
+           -o-transform: translateY(-50%);
+              transform: translateY(-50%);
+    
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .context-menu-icon.context-menu-icon--fa.context-menu-hover:before {
+      color: #fff;
+    }
+    .context-menu-icon.context-menu-icon--fa.context-menu-disabled::before {
+      color: #bbb;
+    }
+    
+    .context-menu-list {
+      position: absolute;
+      display: inline-block;
+      min-width: 13em;
+      max-width: 26em;
+      padding: .25em 0;
+      margin: .3em;
+      font-family: inherit;
+      font-size: inherit;
+      list-style-type: none;
+      background: #fff;
+      border: 1px solid #bebebe;
+      border-radius: .2em;
+      -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
+              box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
+    }
+    
+    .context-menu-item {
+      position: relative;
+      padding: .2em 2em;
+      color: #2f2f2f;
+      -webkit-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none;
+      background-color: #fff;
+    }
+    
+    .context-menu-separator {
+      padding: 0;
+      margin: .35em 0;
+      border-bottom: 1px solid #e6e6e6;
+    }
+    
+    .context-menu-item > label > input,
+    .context-menu-item > label > textarea {
+      -webkit-user-select: text;
+         -moz-user-select: text;
+          -ms-user-select: text;
+              user-select: text;
+    }
+    
+    .context-menu-item.context-menu-hover {
+      color: #fff;
+      cursor: pointer;
+      background-color: #2980b9;
+    }
+    
+    .context-menu-item.context-menu-disabled {
+      color: #bbb;
+      cursor: default;
+      background-color: #fff;
+    }
+    
+    .context-menu-input.context-menu-hover {
+      color: #2f2f2f;
+      cursor: default;
+    }
+    
+    .context-menu-submenu:after {
+      position: absolute;
+      top: 50%;
+      right: .5em;
+      z-index: 1;
+      width: 0;
+      height: 0;
+      content: '';
+      border-color: transparent transparent transparent #2f2f2f;
+      border-style: solid;
+      border-width: .25em 0 .25em .25em;
+      -webkit-transform: translateY(-50%);
+          -ms-transform: translateY(-50%);
+           -o-transform: translateY(-50%);
+              transform: translateY(-50%);
+    }
+    
+    /**
+     * Inputs
+     */
+    .context-menu-item.context-menu-input {
+      padding: .3em .6em;
+    }
+    
+    /* vertically align inside labels */
+    .context-menu-input > label > * {
+      vertical-align: top;
+    }
+    
+    /* position checkboxes and radios as icons */
+    .context-menu-input > label > input[type="checkbox"],
+    .context-menu-input > label > input[type="radio"] {
+      position: relative;
+      top: .12em;
+      margin-right: .4em;
+    }
+    
+    .context-menu-input > label {
+      margin: 0;
+    }
+    
+    .context-menu-input > label,
+    .context-menu-input > label > input[type="text"],
+    .context-menu-input > label > textarea,
+    .context-menu-input > label > select {
+      display: block;
+      width: 100%;
+      -webkit-box-sizing: border-box;
+         -moz-box-sizing: border-box;
+              box-sizing: border-box;
+    }
+    
+    .context-menu-input > label > textarea {
+      height: 7em;
+    }
+    
+    .context-menu-item > .context-menu-list {
+      top: .3em;
+      /* re-positioned by js */
+      right: -.3em;
+      display: none;
+    }
+    
+    .context-menu-item.context-menu-visible > .context-menu-list {
+      display: block;
+    }
+    
+    .context-menu-accesskey {
+      text-decoration: underline;
+    }
+    </style><style type="text/css">
+    @import url('https://fonts.googleapis.com/css?family=Lato');
+    
+    .context-menu-list {
+      font-family: 'Lato', sans-serif !important;
+      font-size: 14px;
+      text-align: left;
+      font-weight: normal;
+      width: 200px;
+    }
+    .context-menu-item {
+      font-weight: inherit;
+      font-size: inherit;
+      line-height: inherit;
+      text-align: left;
+    }
+    .contextmenu-item-custom.contextmenu-item-custom__accent:not(:hover) {
+      background-color: #f8ffeb;
+    }
+    .contextmenu-item-custom.contextmenu-item-custom__success:not(:hover) {
+      background-color: #eeffcd;
+    }
+    </style><!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+<meta name="shimejiBrowserExtensionId" content="gohjpllcolmccldfdggmamodembldgpc" data-version="1.6.5"><style type="text/css">
+@charset "UTF-8";
+/*!
+ * jQuery contextMenu - Plugin for simple contextMenu handling
+ *
+ * Version: v2.5.0
+ *
+ * Authors: Björn Brala (SWIS.nl), Rodney Rehm, Addy Osmani (patches for FF)
+ * Web: http://swisnl.github.io/jQuery-contextMenu/
+ *
+ * Copyright (c) 2011-2017 SWIS BV and contributors
+ *
+ * Licensed under
+ *   MIT License http://www.opensource.org/licenses/mit-license
+ *
+ * Date: 2017-05-25T11:30:28.663Z
+ */
+@-webkit-keyframes cm-spin {
+  0% {
+    -webkit-transform: translateY(-50%) rotate(0deg);
+            transform: translateY(-50%) rotate(0deg);
+  }
+  100% {
+    -webkit-transform: translateY(-50%) rotate(359deg);
+            transform: translateY(-50%) rotate(359deg);
+  }
+}
+@-o-keyframes cm-spin {
+  0% {
+    -webkit-transform: translateY(-50%) rotate(0deg);
+         -o-transform: translateY(-50%) rotate(0deg);
+            transform: translateY(-50%) rotate(0deg);
+  }
+  100% {
+    -webkit-transform: translateY(-50%) rotate(359deg);
+         -o-transform: translateY(-50%) rotate(359deg);
+            transform: translateY(-50%) rotate(359deg);
+  }
+}
+@keyframes cm-spin {
+  0% {
+    -webkit-transform: translateY(-50%) rotate(0deg);
+         -o-transform: translateY(-50%) rotate(0deg);
+            transform: translateY(-50%) rotate(0deg);
+  }
+  100% {
+    -webkit-transform: translateY(-50%) rotate(359deg);
+         -o-transform: translateY(-50%) rotate(359deg);
+            transform: translateY(-50%) rotate(359deg);
+  }
+}
+
+@font-face {
+  font-family: "context-menu-icons";
+  font-style: normal;
+  font-weight: normal;
+
+  src: url("font/context-menu-icons.eot?4yg1f");
+  src: url("font/context-menu-icons.eot?4yg1f#iefix") format("embedded-opentype"), url("font/context-menu-icons.woff2?4yg1f") format("woff2"), url("font/context-menu-icons.woff?4yg1f") format("woff"), url("font/context-menu-icons.ttf?4yg1f") format("truetype");
+}
+
+.context-menu-icon-add:before {
+  content: "EA01";
+}
+
+.context-menu-icon-copy:before {
+  content: "EA02";
+}
+
+.context-menu-icon-cut:before {
+  content: "EA03";
+}
+
+.context-menu-icon-delete:before {
+  content: "EA04";
+}
+
+.context-menu-icon-edit:before {
+  content: "EA05";
+}
+
+.context-menu-icon-loading:before {
+  content: "EA06";
+}
+
+.context-menu-icon-paste:before {
+  content: "EA07";
+}
+
+.context-menu-icon-quit:before {
+  content: "EA08";
+}
+
+.context-menu-icon::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 2em;
+  font-family: "context-menu-icons";
+  font-size: 1em;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  color: #2980b9;
+  text-align: center;
+  -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+       -o-transform: translateY(-50%);
+          transform: translateY(-50%);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.context-menu-icon.context-menu-hover:before {
+  color: #fff;
+}
+
+.context-menu-icon.context-menu-disabled::before {
+  color: #bbb;
+}
+
+.context-menu-icon.context-menu-icon-loading:before {
+  -webkit-animation: cm-spin 2s infinite;
+       -o-animation: cm-spin 2s infinite;
+          animation: cm-spin 2s infinite;
+}
+
+.context-menu-icon.context-menu-icon--fa {
+  display: list-item;
+  font-family: inherit;
+}
+.context-menu-icon.context-menu-icon--fa::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 2em;
+  font-family: FontAwesome;
+  font-size: 1em;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  color: #2980b9;
+  text-align: center;
+  -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+       -o-transform: translateY(-50%);
+          transform: translateY(-50%);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.context-menu-icon.context-menu-icon--fa.context-menu-hover:before {
+  color: #fff;
+}
+.context-menu-icon.context-menu-icon--fa.context-menu-disabled::before {
+  color: #bbb;
+}
+
+.context-menu-list {
+  position: absolute;
+  display: inline-block;
+  min-width: 13em;
+  max-width: 26em;
+  padding: .25em 0;
+  margin: .3em;
+  font-family: inherit;
+  font-size: inherit;
+  list-style-type: none;
+  background: #fff;
+  border: 1px solid #bebebe;
+  border-radius: .2em;
+  -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
+          box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
+}
+
+.context-menu-item {
+  position: relative;
+  padding: .2em 2em;
+  color: #2f2f2f;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  background-color: #fff;
+}
+
+.context-menu-separator {
+  padding: 0;
+  margin: .35em 0;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.context-menu-item > label > input,
+.context-menu-item > label > textarea {
+  -webkit-user-select: text;
+     -moz-user-select: text;
+      -ms-user-select: text;
+          user-select: text;
+}
+
+.context-menu-item.context-menu-hover {
+  color: #fff;
+  cursor: pointer;
+  background-color: #2980b9;
+}
+
+.context-menu-item.context-menu-disabled {
+  color: #bbb;
+  cursor: default;
+  background-color: #fff;
+}
+
+.context-menu-input.context-menu-hover {
+  color: #2f2f2f;
+  cursor: default;
+}
+
+.context-menu-submenu:after {
+  position: absolute;
+  top: 50%;
+  right: .5em;
+  z-index: 1;
+  width: 0;
+  height: 0;
+  content: '';
+  border-color: transparent transparent transparent #2f2f2f;
+  border-style: solid;
+  border-width: .25em 0 .25em .25em;
+  -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+       -o-transform: translateY(-50%);
+          transform: translateY(-50%);
+}
+
+/**
+ * Inputs
+ */
+.context-menu-item.context-menu-input {
+  padding: .3em .6em;
+}
+
+/* vertically align inside labels */
+.context-menu-input > label > * {
+  vertical-align: top;
+}
+
+/* position checkboxes and radios as icons */
+.context-menu-input > label > input[type="checkbox"],
+.context-menu-input > label > input[type="radio"] {
+  position: relative;
+  top: .12em;
+  margin-right: .4em;
+}
+
+.context-menu-input > label {
+  margin: 0;
+}
+
+.context-menu-input > label,
+.context-menu-input > label > input[type="text"],
+.context-menu-input > label > textarea,
+.context-menu-input > label > select {
+  display: block;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.context-menu-input > label > textarea {
+  height: 7em;
+}
+
+.context-menu-item > .context-menu-list {
+  top: .3em;
+  /* re-positioned by js */
+  right: -.3em;
+  display: none;
+}
+
+.context-menu-item.context-menu-visible > .context-menu-list {
+  display: block;
+}
+
+.context-menu-accesskey {
+  text-decoration: underline;
+}
+</style><style type="text/css">
+@import url('https://fonts.googleapis.com/css?family=Lato');
+
+.context-menu-list {
+  font-family: 'Lato', sans-serif !important;
+  font-size: 14px;
+  text-align: left;
+  font-weight: normal;
+  width: 200px;
+}
+.context-menu-item {
+  font-weight: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  text-align: left;
+}
+.contextmenu-item-custom.contextmenu-item-custom__accent:not(:hover) {
+  background-color: #f8ffeb;
+}
+.contextmenu-item-custom.contextmenu-item-custom__success:not(:hover) {
+  background-color: #eeffcd;
+}
+</style></head>
+    <body style="background-attachment: fixed" vlink="#ffffff" topmargin="0" link="#ffffff" leftmargin="0" background="0b5934b623f3c6f5377f221959d77982.gif" alink="#ffffff">
+    <link rel="shortcut icon" href="https://www.projectparafer.com/favicon.ico">
+    
+      
+            <table width="100%" height="125" cellspacing="0" cellpadding="0" border="0" background="https://www.projectparafer.com/img/assets/backdrop.png" align="center"> 
+            <tbody><tr>
+                     
+                     
+                       <td style="text-align: center;">
+                       <meta http-equiv="Content-Type" content="text/html; charset=utf-8"><div id="cf">
+    
+     
+                            
+                          <center><img src="Moonietext.png" alt="" srcset="" height="150"></center>
+    
+    
+    
+    <style>
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      border-bottom: none;
+    }
+    
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 120px;
+      background-color: #19abff;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px 0;
+    
+      /* Position the tooltip */
+      position: absolute;
+      z-index: 1;
+    }
+    
+    .tooltip .tooltiptext {
+      width: 120px;
+      bottom: 100%;
+      left: 50%;
+      margin-left: -60px; 
+    }
+    
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+    }
+
+    body{background-image: url(https://i.pinimg.com/originals/0b/59/34/0b5934b623f3c6f5377f221959d77982.gif);}
+    
+    </style>
+    
+    
+  
+</tr><tr> 
+    </tr>
+                          </tbody>
+                      </table>
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+    
+    
+        
+    
+    
+        
+    
+                
+                    
+                        
+                        <table width="1030" cellspacing="6" cellpadding="0" border="0" align="center">
+                            <tbody>
+                                <tr>
+                                    <td valign="top" align="center">
+                                    <table style="border: 5px solid rgb(0, 216, 0); border-radius: 10px; background: rgb(255, 255, 255)" width="1020" height="500" cellspacing="5" cellpadding="0" border="0" align="center">
+                                        <tbody>
+                                            <tr>
+                                                <td style="text-align: right;" valign="top">
+                                                <p style="text-align: left;"><img src="Star.png" alt="" hspace="5" align="top" height="24"><span style="color: rgb(89, 156, 0)"><span style="font-family: メイリオ;"><span id="result_box" class="short_text" lang="ja"><span style="font-family: 'Noto Serif JP', serif;"><span>Callisto<span style="font-family: Averia Libre"></span></span></span></span><br>
+                                            
+                                                    <img src="Spacer.PNG" alt=""></span></span></p>
+                                                <p style="text-align: center;"><span style="font-family: メイリオ;">
+                                                </span></p><table width="1000" cellspacing="0" cellpadding="0" border="0" align="center">
+                                                    <tbody>
+                                                        <tr>
+                                                            
+                                                         
+                                                            <td valign="top">
+                                                            <table cellspacing="0" cellpadding="0" border="0" align="center">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <center>
+                                                                        <td valign="top" align="center"><img src="Callisto.PNG" alt="" width="" hspace="5" height="1005" 
+                                                                            <table style="border: 3px solid rgb(0, 216, 0); border-radius: 15px; background: rgb(255, 255, 255)" cellspacing="5" cellpadding="0" border="0" align="center" ></table></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            
+
+                                                            </td>
+                                                            <td valign="top" align="center">
+                                                            <table style="border: 3px solid rgb(12, 150, 0); border-radius: 15px; background: rgb(255, 255, 255)" cellspacing="5" cellpadding="0" border="0" align="center">
+                                     <tbody>                        
+                                        <font color="white">.</font>
+                                                                    <tr>
+                                                                        <td valign="top">
+                                                                        <p>
+                                                                        </p><font color="white">.</font><table width="270" height="24" cellspacing="0" cellpadding="0" border="0" align="center">
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    
+                                                                                    <td width="12"><span style="font-size: small;"><span style="font-family: ＭＳ Ｐゴシック;"><span style="color: rgb(0, 52, 221);"><span style="font-size: small;"><span style="font-family: メイリオ;"><span class="st" data-hveid="36"><span style="font-size: small;"><span style="color: rgb(0, 52, 221);"><span style="font-size: small;"><span class="st" data-hveid="36"><span style="font-size: small;"></span></span></span></span></span></span></span></span></span></span></span></td>
+                                                                                    <td style="text-align: left;" width="110" valign="middle" bgcolor="#ffffff"><b><span style="color: rgb(70, 124, 0);"><span style="font-size: medium;"><span style="font-family: ＭＳ Ｐゴシック;"><span style="font-family: メイリオ;"><span class="st" data-hveid="36"><span class="st" data-hveid="36"><p style="text-align: left;"><img src="Star.png" alt="" hspace="5" align="top" height="24"><span style="font-family: Averia Libre"><b>Specie</b></span></p></span></span></span></span></span></span></b></td>
+                                                                                    <td style="text-align: center;" bgcolor="#ffffff"></td><td style="text-align: right;" bgcolor="#ffffff"><span style="color: rgb(145, 255, 0);"><b><span style="font-size: small;"><span style="font-family: ＭＳ Ｐゴシック;"><span style="font-size: small;"><span style="font-family: メイリオ;"><span class="st" data-hveid="36"><span style="font-size: small;"><span style="font-size: small;"><span class="st" data-hveid="36"><span style="font-size: small;"><span style="font-size: medium;"></span></span></span></span></span></span></span></span></span></span></b><span style="font-family: Averia Libre">Moon</span></span></td>
+                                                                                    
+                                                                                </tr>
+                                                                            </tbody>
+                                                                
+                                                                        </table>
+                                                                        <small><span style="font-family: ＭＳ Ｐゴシック;"><span style="font-size: smaller;">&nbsp;</span></span></small>
+                                                                        <font color="white">.</font><table width="270" height="24" cellspacing="0" cellpadding="0" border="0" align="center">
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    
+                                                                                    <td width="12"><span style="font-size: small;"><span style="font-family: ＭＳ Ｐゴシック;"><span style="color: rgb(0, 0, 0);"><span style="font-size: small;"><span style="font-family: メイリオ;"><span class="st" data-hveid="36"><span style="font-size: small;"><span style="color: rgb(0, 52, 221)"><span style="font-size: small;"><span class="st" data-hveid="36"><span style="font-size: small;"></span></span></span></span></span></span></span></span></span></span></span></td>
+                                                                                    <td style="text-align: left;" width="110" valign="middle" bgcolor="#ffffff"><b><span style="color: rgb(70, 124, 0);"><span style="font-size: medium;"><span style="font-family: ＭＳ Ｐゴシック;"><span style="font-family: メイリオ;"><span class="st" data-hveid="36"><span class="st" data-hveid="36"><p style="text-align: left;"><img src="Star.png" alt="" hspace="5" align="top" height="24"><span style="font-family: Averia Libre"><b>Gender</b></span></p></span></span></span></span></span></span></b></td>
+                                                                                    <td style="text-align: center;" bgcolor="#ffffff"></td><td style="text-align: right;" bgcolor="#ffffff"><span style="color: rgb(145, 255, 0);"><b><span style="font-size: small;"><span style="font-family: ＭＳ Ｐゴシック;"><span style="font-size: small;"><span style="font-family: メイリオ;"><span class="st" data-hveid="36"><span style="font-size: small;"><span style="font-size: small;"><span class="st" data-hveid="36"><span style="font-size: small;"><span style="font-size: medium;"><span style="font-family: Averia Libre"></span></span></span></span></span></span></span></span></span></span></span></b><span style="font-family: Averia Libre">Demi-Boy</span>
+                                                                                     
+                                                                                     
+                                                                                       </span></span></td><span style="font-size: medium;" style="text-align:start ;"><div>
+
+
+                                                                                      
+                                                                                 
+                                                                                </tr>
+                                                                            </tbody>
+                                                                            
+                                                                        </table>
+                                                                        <small><span style="font-family: ＭＳ Ｐゴシック;"><span style="font-size: smaller;">&nbsp;</span></span></small>
+                                                                        <font color="white">.</font><table width="270" height="24" cellspacing="0" cellpadding="0" border="0" align="center">
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    
+                                                                                    <td width="12"><span style="font-size: small;"><span style="font-family: ＭＳ Ｐゴシック;"><span style="color: rgb(0, 0, 0);"><span style="font-size: small;"><span style="font-family: メイリオ;"><span class="st" data-hveid="36"><span style="font-size: small;"><span style="color: rgb(0, 52, 221)"><span style="font-size: small;"><span class="st" data-hveid="36"><span style="font-size: small;"></span></span></span></span></span></span></span></span></span></span></span></td>
+                                                                                    <td style="text-align: left;" width="110" valign="middle" bgcolor="#ffffff"><b><span style="color: rgb(70, 124, 0)"><span style="font-size: medium;"><span style="font-family: ＭＳ Ｐゴシック;"><span style="font-family: メイリオ;"><span class="st" data-hveid="36"><span class="st" data-hveid="36"><p style="text-align: left;"><img src="Star.png" alt="" hspace="5" align="top" height="24"><span style="font-family: Averia Libre"><b>Pronouns</b></span></p></span></span></span></span></span></span></b></td> 
+                                                                                    <td style="text-align: center;" bgcolor="#ffffff"></td><td style="text-align: right;" bgcolor="#ffffff"><span style="color: rgb(145, 255, 0);"><b><span style="font-size: small;"><span style="font-family: ＭＳ Ｐゴシック;"><span style="font-size: small;"><span style="font-family: Averia Libre;"><span class="st" data-hveid="36"><span style="font-size: small;"><span style="font-size: small;"><span class="st" data-hveid="36"><span style="font-size: small;"><span style="font-size: medium;"></span></span></span></span></span></span></span></span></span></span></b><span style="font-family: Averia Libre">He / Him / They</span></span></td>
+                                                                                  
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                        
+                                                                        
+                                                                        <small><span style="font-family: ＭＳ Ｐゴシック;"><span style="font-size: smaller;"> </span></span></small><small><span style="font-family: ＭＳ Ｐゴシック;"><span style="font-size: smaller;">&nbsp;</span></span></small>
+                                                                        <font color="white">.</font><small><span style="font-family: ＭＳ Ｐゴシック;"><span style="font-size: smaller;"> </span></span></small><small><span style="font-family: ＭＳ Ｐゴシック;"><span style="font-size: smaller;">&nbsp;</span></span></small><table width="270" height="24" cellspacing="0" cellpadding="0" border="0" align="center">
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    
+                                                                                    <td width="12"><span style="font-size: small;"><span style="font-family: ＭＳ Ｐゴシック;"><span style="color: rgb(145, 255, 0);"><span style="font-size: small;"><span style="font-family: メイリオ;"><span class="st" data-hveid="36"><span style="font-size: small;"><span style="color: rgb(0, 0, 0);"><span style="font-size: small;"><span class="st" data-hveid="36"><span style="font-size: small;"></span></span></span></span></span></span></span></span></span></span></span></td>
+                                                                                    <td style="text-align: left;" width="110" valign="middle" bgcolor="#ffffff"><b><span style="color:rgb(70, 124, 0);"><span style="font-size: medium;"><span style="font-family: ＭＳ Ｐゴシック;"><span style="font-family: メイリオ;"><span class="st" data-hveid="36"><span class="st" data-hveid="36"><p style="text-align: left;"><img src="Star.png" alt="" hspace="5" align="top" height="24"><span style="font-family: Averia Libre"><b>Sexuality</b></span></p></span></span></span></span></span></span></b></td>
+                                                                                    <td style="text-align: center;" bgcolor="#ffffff"></td><td style="text-align: right;" bgcolor="#ffffff"><span style="font-family: メイリオ;"><span style="font-size: small;"><span style="font-family: ＭＳ Ｐゴシック;"><span style="color: rgb(0, 0, 0);"><span style="font-size: small;"><span style="font-family: メイリオ;"><span class="st" data-hveid="36"><span style="font-size: small;"><span style="color: rgb(0, 0, 0);"><span style="font-size: small;"><span class="st" data-hveid="36"><span style="font-size: small;"><span style="font-size: medium;"><span style="font-family: メイリオ;"><span style="font-size: small;"><span style="font-family: ＭＳ Ｐゴシック;"><span style="color: rgb(0, 0, 0);"><span style="font-size: small;"><span style="font-family: メイリオ;"><span class="st" data-hveid="36"><span style="font-size: small;"><span style="color: rgb(0, 0, 0);"><span style="font-size: small;"><span class="st" data-hveid="36"><span style="font-size: small;"><span style="font-size: medium;"><img src="Bissexual.PNG" alt="" height="55" align="absMiddle"></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></td>
+                                                                        
+                                                                                    
+                                                                        </tr></tbody></table><table width="270" height="24" cellspacing="0" cellpadding="0" border="0" align="center">
+                                                                            <tbody>
+                                                                                
+                                                                                   
+                                                                            </tbody>
+                                                                        </table>
+
+                                                                       
+                                                                        <p></p>
+                                                                        </td>
+                                                                        
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                            <br><table style="background: rgb(182, 233, 0) none repeat scroll 0% 0%; border-radius: 15px;" width="282" height="28" cellspacing="1" cellpadding="1" align="center">
+                                                                <tbody>
+                                                                    <tr>
+                                                                       
+                                                                        <td style="text-align: center;"><span style="color: rgb(24, 53, 170);"><span style="font-size: large;"><span style="font-family: メイリオ;"><b><span class="st" data-hveid="36"><span style="font-size: small;"><span style="color: rgb(255, 255, 255);"><span style="font-family: 'Noto Serif JP', serif;">Personality or About</span></span></span></span></b></span></span></span></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                            <p></p>
+                                                            <table width="290" height="32" cellspacing="1" cellpadding="1" border="0" align="center">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td><p style="text-align: center;"><span style="font-size: small;"><span style="font-family: Averia Libre;"><span style="color: rgb(56, 139, 0);"><span class="short_text" lang="ja">"What do I like ? I like to blow things up and- oh... what ? nothing no..."<br>
+                                                                        </span></span></span></span></p><p style="text-align: justify;"><span style="color: rgb(0, 221, 74);"><span style="font-family: Averia Libre;"><span id="result_box" class="short_text" lang="ja"><span>Callisto! A being eh..good... Creepy he usually scares a lot of people he doesn't kill anyone just scares everyone by the fact that he likes to blow EVERYTHING up, his own planet Jupiter is afraid of they... but other than that Callisto is a very friendly being<br>   
+                                                                        </span></span></span></span></p>
+                                                                       
+                                                                       
+                                                                       
+                                                                       
+                                                                      
+                                                                    
+                                                                        <tr>
+                                                                       
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                            <p></p>
+                                                        
+
+                                                           
+
+
+                                                        <img src="Spacer.PNG" alt="" srcset="">
+                                                        <center>
+                                                        <font color="white">.</font>
+                                                        </center>
+
+                                                        <font color="MidnightBlue">Relatives</font>
+                                                 
+                                                                        <p></p>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                        <div class="footer">
+                       </div></td></tr></tbody></table><br>
+                                <p style="text-align: center;"><b><b></b></span></span></span></p>
+                        
+                    </center>
+                    
+                
+            
+            
+        
